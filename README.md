@@ -1,0 +1,2 @@
+# mekatronik
+neü mekatronik notları
