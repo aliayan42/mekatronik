@@ -8,38 +8,81 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; color: #333; }
         header { background-color: #24292e; color: white; padding: 20px; text-align: center; }
         .container { max-width: 800px; margin: 30px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .btn-upload { display: block; text-align: center; background-color: #28a745; color: white; padding: 15px; margin-bottom: 30px; border-radius: 5px; text-decoration: none; font-weight: bold; }
-        .btn-upload:hover { background-color: #218838; }
+        
+        /* Form Alanı */
+        .form-kutusu { background: #e9ecef; padding: 20px; border-radius: 6px; margin-bottom: 30px; border: 1px dashed #6c757d; text-align: center; }
+        .form-kutusu h3 { margin-top: 0; }
+        .btn-link { display: inline-block; background-color: #28a745; color: white; padding: 12px 25px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 16px; margin-top: 10px; }
+        .btn-link:hover { background-color: #218838; }
+
+        /* Ders Menüsü */
         .ders-kutu { border-bottom: 1px solid #ddd; padding: 15px 0; }
-        .ders-kutu h3 { margin: 0 0 10px 0; color: #007bff; }
-        .not-link { display: inline-block; background-color: #f1f3f5; color: #495057; padding: 5px 10px; margin: 5px 5px 5px 0; border-radius: 3px; text-decoration: none; font-size: 14px; border: 1px solid #ced4da; }
-        .not-link:hover { background-color: #e2e6ea; }
+        .ders-baslik { color: #007bff; cursor: pointer; margin: 0; padding: 10px 0; font-size: 20px; display: flex; justify-content: space-between; font-weight: 600; }
+        .ders-baslik:hover { color: #0056b3; }
+        .notlar-listesi { display: none; padding-left: 15px; margin-top: 10px; padding-bottom: 10px; }
+        .not-link { display: inline-block; background-color: #ffffff; color: #495057; padding: 8px 15px; margin: 5px; border-radius: 4px; text-decoration: none; font-size: 14px; border: 1px solid #ced4da; transition: 0.2s; }
+        .not-link:hover { background-color: #007bff; color: white; border-color: #007bff; }
+        .bos-mesaj { color: #6c757d; font-style: italic; font-size: 14px; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>🤖 Mekatronik Ders Notları Paylaşımı</h1>
-        <p>Mekatronik öğrencileri için not ve soru deposu...</p>
+        <h1>🤖 NEÜ Mekatronik Ders Notları</h1>
+        <p>Mekatronik öğrencileri için çıkmış sorular, notlar ve döküman havuzu</p>
     </header>
 
     <div class="container">
-        <a href="BURAYA_GOOGLE_FORM_LINKINI_YAPISTIR" target="_blank" class="btn-upload">🚀 Sende Var Olan Bir Notu/Soruyu Yükle</a>
+        
+        <div class="form-kutusu">
+            <h3>🚀 Sende Var Olan Bir Notu/Soruyu Yükle</h3>
+            <p>Aşağıdaki butona tıkladığında açılan formdan dersi seçip bilgisayar veya telefonundan dosyanı yükleyebilirsin.</p>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSe34lq0t9lBSn9zptnF7O-3zDIYYeTEJ8kDT-08LlyoflzFXw/viewform?usp=header" target="_blank" class="btn-link">Dosya Seç ve Yükle</a>
+        </div>
 
-        <h2>Ders Listesi</h2>
+        <h2>📚 Ders Notları (Görmek için Derse Tıklayın)</h2>
         <hr>
 
         <div class="ders-kutu">
-            <h3>Matematik 1</h3>
-            <p>Henüz not eklenmedi. İlk notu sen gönderebilirsin!</p>
+            <div class="ders-baslik" onclick="dersAcKapat('mat1')">📐 Matematik 1 <span>▼</span></div>
+            <div id="mat1" class="notlar-listesi">
+                <p class="bos-mesaj">Henüz not eklenmedi. İlk notu yukarıdan sen gönderebilirsin!</p>
+            </div>
         </div>
 
         <div class="ders-kutu">
-            <h3>Fizik 1</h3>
-            <p>Henüz not eklenmedi.</p>
+            <div class="ders-baslik" onclick="dersAcKapat('fiz1')">🧲 Fizik 1 <span>▼</span></div>
+            <div id="fiz1" class="notlar-listesi">
+                <p class="bos-mesaj">Henüz not eklenmedi. İlk notu yukarıdan sen gönderebilirsin!</p>
+                </div>
+        </div>
+
+        <div class="ders-kutu">
+            <div class="ders-baslik" onclick="dersAcKapat('mekGiris')">🤖 Mekatronik Mühendisliğine Giriş <span>▼</span></div>
+            <div id="mekGiris" class="notlar-listesi">
+                <p class="bos-mesaj">Henüz not eklenmedi.</p>
+            </div>
+        </div>
+
+        <div class="ders-kutu">
+            <div class="ders-baslik" onclick="dersAcKapat('teknikResim')">📐 Teknik Resim (AutoCAD/SolidWorks) <span>▼</span></div>
+            <div id="teknikResim" class="notlar-listesi">
+                <p class="bos-mesaj">Henüz not eklenmedi.</p>
+            </div>
         </div>
 
     </div>
+
+    <script>
+        function dersAcKapat(dersId) {
+            var liste = document.getElementById(dersId);
+            if (liste.style.display === "block") {
+                liste.style.display = "none";
+            } else {
+                liste.style.display = "block";
+            }
+        }
+    </script>
 
 </body>
 </html>
