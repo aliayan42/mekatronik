@@ -3,19 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mekatronik Ders Notları</title>
+    <title>NEÜ Mekatronik Ders Notları</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 0; color: #333; }
         header { background-color: #24292e; color: white; padding: 20px; text-align: center; }
         .container { max-width: 800px; margin: 30px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         
-        /* Form Alanı */
-        .form-kutusu { background: #e9ecef; padding: 20px; border-radius: 6px; margin-bottom: 30px; border: 1px dashed #6c757d; text-align: center; }
-        .form-kutusu h3 { margin-top: 0; }
-        .btn-link { display: inline-block; background-color: #28a745; color: white; padding: 12px 25px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 16px; margin-top: 10px; }
-        .btn-link:hover { background-color: #218838; }
+        /* Dosya Yükleme Paneli */
+        .upload-panel { background: #e9ecef; padding: 20px; border-radius: 6px; margin-bottom: 30px; border: 1px dashed #6c757d; }
+        .upload-panel h3 { margin-top: 0; text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group select, .form-group input[type="file"] { width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box; }
+        .btn-upload { display: block; width: 100%; background-color: #28a745; color: white; padding: 12px; border: none; border-radius: 5px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; }
+        .btn-upload:hover { background-color: #218838; }
+        #statusMessage { text-align: center; font-weight: bold; margin-top: 10px; color: #007bff; }
 
-        /* Ders Menüsü */
+        /* Ders Listesi */
         .ders-kutu { border-bottom: 1px solid #ddd; padding: 15px 0; }
         .ders-baslik { color: #007bff; cursor: pointer; margin: 0; padding: 10px 0; font-size: 20px; display: flex; justify-content: space-between; font-weight: 600; }
         .ders-baslik:hover { color: #0056b3; }
@@ -24,65 +28,127 @@
         .not-link:hover { background-color: #007bff; color: white; border-color: #007bff; }
         .bos-mesaj { color: #6c757d; font-style: italic; font-size: 14px; }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
     <header>
         <h1>🤖 NEÜ Mekatronik Ders Notları</h1>
-        <p>Mekatronik öğrencileri için çıkmış sorular, notlar ve döküman havuzu</p>
+        <p>Her şeyin site üzerinden otomatik yüklendiği not havuzu</p>
     </header>
 
     <div class="container">
         
-        <div class="form-kutusu">
+        <div class="upload-panel">
             <h3>🚀 Sende Var Olan Bir Notu/Soruyu Yükle</h3>
-            <p>Aşağıdaki butona tıkladığında açılan formdan dersi seçip bilgisayar veya telefonundan dosyanı yükleyebilirsin.</p>
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSe34lq0t9lBSn9zptnF7O-3zDIYYeTEJ8kDT-08LlyoflzFXw/viewform?usp=header" target="_blank" class="btn-link">Dosya Seç ve Yükle</a>
+            <div class="form-group">
+                <label for="dersSecim">Hangi Ders?</label>
+                <select id="dersSecim">
+                    <option value="mat1">📐 Matematik 1</option>
+                    <option value="fiz1">🧲 Fizik 1</option>
+                    <option value="mekGiris">🤖 Mekatronik Mühendisliğine Giriş</option>
+                    <option value="teknikResim">📐 Teknik Resim (AutoCAD/SolidWorks)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="dosyaSecim">Dosya Seç (PDF veya Fotoğraf):</label>
+                <input type="file" id="dosyaSecim">
+            </div>
+            <button class="btn-upload" onclick="dosyaYukle()">Seçilen Dosyayı Siteye Yükle</button>
+            <div id="statusMessage"></div>
         </div>
 
         <h2>📚 Ders Notları (Görmek için Derse Tıklayın)</h2>
         <hr>
 
-        <div class="ders-kutu">
-            <div class="ders-baslik" onclick="dersAcKapat('mat1')">📐 Matematik 1 <span>▼</span></div>
-            <div id="mat1" class="notlar-listesi">
-                <p class="bos-mesaj">Henüz not eklenmedi. İlk notu yukarıdan sen gönderebilirsin!</p>
-            </div>
-        </div>
-
-        <div class="ders-kutu">
-            <div class="ders-baslik" onclick="dersAcKapat('fiz1')">🧲 Fizik 1 <span>▼</span></div>
-            <div id="fiz1" class="notlar-listesi">
-                <p class="bos-mesaj">Henüz not eklenmedi. İlk notu yukarıdan sen gönderebilirsin!</p>
-                </div>
-        </div>
-
-        <div class="ders-kutu">
-            <div class="ders-baslik" onclick="dersAcKapat('mekGiris')">🤖 Mekatronik Mühendisliğine Giriş <span>▼</span></div>
-            <div id="mekGiris" class="notlar-listesi">
-                <p class="bos-mesaj">Henüz not eklenmedi.</p>
-            </div>
-        </div>
-
-        <div class="ders-kutu">
-            <div class="ders-baslik" onclick="dersAcKapat('teknikResim')">📐 Teknik Resim (AutoCAD/SolidWorks) <span>▼</span></div>
-            <div id="teknikResim" class="notlar-listesi">
-                <p class="bos-mesaj">Henüz not eklenmedi.</p>
-            </div>
-        </div>
+        <div class="ders-kutu"><div class="ders-baslik" onclick="dersAcKapat('mat1')">📐 Matematik 1 <span>▼</span></div><div id="mat1" class="notlar-listesi"><p class="bos-mesaj">Notlar yükleniyor...</p></div></div>
+        <div class="ders-kutu"><div class="ders-baslik" onclick="dersAcKapat('fiz1')">🧲 Fizik 1 <span>▼</span></div><div id="fiz1" class="notlar-listesi"><p class="bos-mesaj">Notlar yükleniyor...</p></div></div>
+        <div class="ders-kutu"><div class="ders-baslik" onclick="dersAcKapat('mekGiris')">🤖 Mekatronik Mühendisliğine Giriş <span>▼</span></div><div id="mekGiris" class="notlar-listesi"><p class="bos-mesaj">Notlar yükleniyor...</p></div></div>
+        <div class="ders-kutu"><div class="ders-baslik" onclick="dersAcKapat('teknikResim')">📐 Teknik Resim (AutoCAD/SolidWorks) <span>▼</span></div><div id="teknikResim" class="notlar-listesi"><p class="bos-mesaj">Notlar yükleniyor...</p></div></div>
 
     </div>
 
     <script>
-        function dersAcKapat(dersId) {
-            var liste = document.getElementById(dersId);
-            if (liste.style.display === "block") {
-                liste.style.display = "none";
+        // Senin Supabase Bilgilerin
+        const SUPABASE_URL = "https://stvyuuyezjzsceedanng.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0dnl1dXlleGZ6c2NlZWRhbm5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5ODYyNzYsImV4cCI6MjA4NjU2MjI3Nn0.8XbI6K6p5jE_2zTf0Z56WvX6YFvY3w_R4x06m-24U7E"; 
+        
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        window.onload = function() {
+            notlariGetir();
+        };
+
+        async function dosyaYukle() {
+            const fileInput = document.getElementById('dosyaSecim');
+            const ders = document.getElementById('dersSecim').value;
+            const status = document.getElementById('statusMessage');
+            
+            if (fileInput.files.length === 0) {
+                status.innerText = "Lütfen önce bir dosya seçin!";
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const fileName = ders + "_" + Date.now() + "_" + file.name;
+
+            status.innerText = "Yükleniyor, lütfen bekleyin...";
+
+            const { data, error } = await _supabase.storage
+                .from('notlar')
+                .upload(fileName, file);
+
+            if (error) {
+                status.innerText = "Hata oluştu: " + error.message;
             } else {
-                liste.style.display = "block";
+                status.innerText = "Dosya başarıyla yüklendi! Sayfa yenileniyor...";
+                setTimeout(() => { location.reload(); }, 1500);
+            }
+        }
+
+        async function notlariGetir() {
+            const { data, error } = await _supabase.storage.from('notlar').list('', { limit: 100 });
+            
+            if (error) return;
+
+            const dersler = ['mat1', 'fiz1', 'mekGiris', 'teknikResim'];
+            dersler.forEach(d => document.getElementById(d).innerHTML = "");
+
+            let sayac = { mat1: 0, fiz1: 0, mekGiris: 0, teknikResim: 0 };
+
+            data.forEach(file => {
+                const parcalar = file.name.split('_');
+                const dersId = parcalar[0];
+                
+                if (dersler.includes(dersId)) {
+                    sayac[dersId]++;
+                    const orijinalAd = file.name.substring(file.name.indexOf('_', file.name.indexOf('_') + 1) + 1);
+                    const publicUrl = SUPABASE_URL + "/storage/v1/object/public/notlar/" + file.name;
+                    
+                    const a = document.createElement('a');
+                    a.href = publicUrl;
+                    a.target = "_blank";
+                    a.className = "not-link";
+                    a.innerText = "📄 " + orijinalAd;
+                    document.getElementById(dersId).appendChild(a);
+                }
+            });
+
+            dersler.forEach(d => {
+                if (sayac[d] === 0) {
+                    document.getElementById(d).innerHTML = '<p class="bos-mesaj">Henüz not eklenmedi. İlk notu yukarıdan sen gönderebilirsin!</p>';
+                }
+            });
+        }
+
+        function dersAcKapat(dersId) {
+            var input = document.getElementById(dersId);
+            if (input.style.display === "block") {
+                input.style.display = "none";
+            } else {
+                input.style.display = "block";
             }
         }
     </script>
-
 </body>
 </html>
